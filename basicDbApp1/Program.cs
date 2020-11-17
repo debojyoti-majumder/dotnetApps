@@ -6,6 +6,7 @@
 */
 
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace basicDbApp1
 {
@@ -13,7 +14,29 @@ namespace basicDbApp1
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Basic data base application");
+            // This is as of now is just logging
+            Console.WriteLine("Basic database application");
+
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            optionsBuilder.UseSqlite("Data Source=app.db");
+
+            using ( var dbContext = new AppDbContext(optionsBuilder.Options) ) 
+            {
+                Console.WriteLine("DB Context got created successfully");
+
+                // Adding a simple Task
+                Todo newTask = new Todo 
+                {
+                    Description = "This is for Demo purpouse",
+                    Name = "Understanding Migrations",
+                    TaskStarted = DateTime.Now
+                };
+
+                dbContext.RecordedTasks.Add(newTask);
+                dbContext.SaveChanges();
+
+                Console.WriteLine("Saved the records");                
+            }
         }
     }
 }
