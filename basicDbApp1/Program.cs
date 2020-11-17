@@ -12,6 +12,35 @@ namespace basicDbApp1
 {
     class Program
     {
+        private static void AddTodo(AppDbContext dbContext, string justTitle) 
+        {
+            // Adding a simple Task
+            Todo newTask = new Todo 
+            {
+                Description = justTitle,
+                Name = justTitle,
+                TaskStarted = DateTime.Now
+            };
+
+            dbContext.RecordedTasks.Add(newTask);
+            dbContext.SaveChanges();
+
+            Console.WriteLine("Saved the records");
+            DisplayRecords(dbContext);  
+        }
+
+        private static void DisplayRecords(AppDbContext dbContext) 
+        {
+            foreach( var todoTaskItem in dbContext.RecordedTasks )
+            {
+                var output = "Task ID:" + todoTaskItem.Id + " \'"; 
+                output += todoTaskItem.Name + "\' ";
+                output += " is added on " + todoTaskItem.TaskStarted.ToString();
+
+                Console.WriteLine(output);
+            }
+        }
+
         static void Main(string[] args)
         {
             // This is as of now is just logging
@@ -24,18 +53,15 @@ namespace basicDbApp1
             {
                 Console.WriteLine("DB Context got created successfully");
 
-                // Adding a simple Task
-                Todo newTask = new Todo 
+                if( args.Length == 0 ) 
                 {
-                    Description = "This is for Demo purpouse",
-                    Name = "Understanding Migrations",
-                    TaskStarted = DateTime.Now
-                };
-
-                dbContext.RecordedTasks.Add(newTask);
-                dbContext.SaveChanges();
-
-                Console.WriteLine("Saved the records");                
+                    DisplayRecords(dbContext);
+                }
+                else if( args.Length == 1 ) 
+                {
+                    Console.WriteLine("Adding {0} as task " , args[0]);
+                    AddTodo(dbContext, args[0]);
+                }              
             }
         }
     }
