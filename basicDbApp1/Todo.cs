@@ -22,6 +22,8 @@ namespace basicDbApp1
             output += Name + "\' ";
             output += " is added on " + TaskStarted.ToString();
 
+            if( TaskFinished < TaskStarted ) output += " [ Not Finished ]";
+            else output += " finished on " + TaskFinished.ToString();
             return output;
         }  
     }

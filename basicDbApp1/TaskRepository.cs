@@ -39,5 +39,27 @@ namespace basicDbApp1
         {
             return dbContext.RecordedTasks;          
         }
+
+        public Boolean RemoveTask(int id) 
+        {
+            Todo foundTask = dbContext.RecordedTasks.Find(id);
+            if( foundTask == null ) return false;
+
+            dbContext.RecordedTasks.Remove(foundTask);
+            dbContext.SaveChanges();
+            return true;          
+        }
+
+        public Boolean MarkCompleted(int id)
+        {
+            Todo foundTask = dbContext.RecordedTasks.Find(id);
+            if( foundTask == null ) return false;
+
+            foundTask.TaskFinished = DateTime.Now;
+            dbContext.RecordedTasks.Update(foundTask);
+            dbContext.SaveChanges();
+
+            return true;    
+        }       
     }
 }

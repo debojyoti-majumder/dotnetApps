@@ -20,24 +20,49 @@ namespace basicDbApp1
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             optionsBuilder.UseSqlite("Data Source=app.db");
 
-            using ( var dbContext = new AppDbContext(optionsBuilder.Options) ) 
+            using (var dbContext = new AppDbContext(optionsBuilder.Options))
             {
                 TaskRepository repository = new TaskRepository(dbContext);
-                Console.WriteLine("DB Context got created successfully");
+                string targetCommand = args[0];
+                targetCommand = targetCommand.ToLower();
 
-                if( args.Length == 0 ) 
+                switch (targetCommand)
                 {
-                    foreach( var todoTaskItem in repository.GetTasks() )
+                    case "addtodo":
+                        {
+                            int taskId = repository.AddTask(args[1]);
+                            Console.WriteLine("Task added with ID {0}", taskId);
+                            break;
+                        }
+
+                    case "listtodo":
+                        {
+                            foreach (var todoTaskItem in repository.GetTasks())
+                                Console.WriteLine(todoTaskItem);
+
+                            break;
+                        }
+
+                    case "deltodo":
                     {
-                        Console.WriteLine(todoTaskItem);
+                        int taskId = Int32.Parse(args[1]);
+                        Console.WriteLine("Removed Return code: {0}", repository.RemoveTask(taskId));
+                        break;
                     }
+
+                    case "fintodo":
+                    {
+                        int taskId = Int32.Parse(args[1]);
+                        Console.WriteLine("Task updated: {0}", repository.MarkCompleted(taskId));
+                        break;
+                    }
+
+                    default:
+                        {
+                            Console.WriteLine("{0} Invalid command", targetCommand);
+                            break;
+                        }
                 }
-                else if( args.Length == 1 ) 
-                {
-                    Console.WriteLine("Adding {0} as task " , args[0]);
-                    int taskId = repository.AddTask(args[0]);
-                    Console.WriteLine("Task added with ID {0}", taskId);
-                }              
             }
         }
     }
