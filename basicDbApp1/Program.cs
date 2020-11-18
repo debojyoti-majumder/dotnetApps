@@ -12,35 +12,6 @@ namespace basicDbApp1
 {
     class Program
     {
-        private static void AddTodo(AppDbContext dbContext, string justTitle) 
-        {
-            // Adding a simple Task
-            Todo newTask = new Todo 
-            {
-                Description = justTitle,
-                Name = justTitle,
-                TaskStarted = DateTime.Now
-            };
-
-            dbContext.RecordedTasks.Add(newTask);
-            dbContext.SaveChanges();
-
-            Console.WriteLine("Saved the records");
-            DisplayRecords(dbContext);  
-        }
-
-        private static void DisplayRecords(AppDbContext dbContext) 
-        {
-            foreach( var todoTaskItem in dbContext.RecordedTasks )
-            {
-                var output = "Task ID:" + todoTaskItem.Id + " \'"; 
-                output += todoTaskItem.Name + "\' ";
-                output += " is added on " + todoTaskItem.TaskStarted.ToString();
-
-                Console.WriteLine(output);
-            }
-        }
-
         static void Main(string[] args)
         {
             // This is as of now is just logging
@@ -51,16 +22,21 @@ namespace basicDbApp1
 
             using ( var dbContext = new AppDbContext(optionsBuilder.Options) ) 
             {
+                TaskRepository repository = new TaskRepository(dbContext);
                 Console.WriteLine("DB Context got created successfully");
 
                 if( args.Length == 0 ) 
                 {
-                    DisplayRecords(dbContext);
+                    foreach( var todoTaskItem in repository.GetTasks() )
+                    {
+                        Console.WriteLine(todoTaskItem);
+                    }
                 }
                 else if( args.Length == 1 ) 
                 {
                     Console.WriteLine("Adding {0} as task " , args[0]);
-                    AddTodo(dbContext, args[0]);
+                    int taskId = repository.AddTask(args[0]);
+                    Console.WriteLine("Task added with ID {0}", taskId);
                 }              
             }
         }

@@ -15,5 +15,14 @@ namespace basicDbApp1
         public string Description {get; set;}
         public DateTime TaskStarted {get; set;}
         public DateTime TaskFinished {get; set;}
+
+        public override string ToString()
+        { 
+            var output = "Task ID:" + Id + " \'"; 
+            output += Name + "\' ";
+            output += " is added on " + TaskStarted.ToString();
+
+            return output;
+        }  
     }
 }
